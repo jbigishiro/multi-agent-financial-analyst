@@ -1,6 +1,5 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-
 class Settings(BaseSettings):
 
     openai_api_key: str
@@ -15,6 +14,5 @@ class Settings(BaseSettings):
         env_file=".env",
         extra="ignore"
     )
-
 
 settings = Settings()
