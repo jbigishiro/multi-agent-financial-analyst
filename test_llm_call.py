@@ -19,6 +19,5 @@ def main():
     print("\nResponse:")
     print(response.content)
 
-
 if __name__ == "__main__":
     main()
