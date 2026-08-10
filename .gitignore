@@ -1,4 +1,8 @@
 venv/
 .env
-__pycache__/
+__py
+cache__/
 *.pyc
+data/chroma/
+documents/nvidia_annual_report.pdf
+
