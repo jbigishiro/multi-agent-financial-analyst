@@ -1,7 +1,7 @@
 from config.settings import settings
 
 
-print(settings.langsmith_api_key)
+print(settings.openai_api_key)
 
 print(settings.model_name)
 
