@@ -8,7 +8,11 @@ def get_company_info(ticker: str) -> str:
     """
     ticker = ticker.upper().strip()
     stock = yf.Ticker(ticker)
+    if not ticker:
+        raise ValueError("Ticker symbol cannot be empty.")
     info = stock.info
+    if not info:
+        raise ValueError(f"No financial information found for ticker '{ticker}'.")
     company_name = info.get("longName", "Unknown")
     sector = info.get("sector", "Unknown")
     industry = info.get("industry", "Unknown")

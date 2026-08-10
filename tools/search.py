@@ -9,6 +9,9 @@ def search_web(query: str) -> str:
     Use this tool when up-to-date or external information
     is required.
     """
+    if not query.strip():
+            raise ValueError("Search query cannot be empty.")
+    
     client = TavilyClient(api_key=settings.tavily_api_key)
     response = client.search(query=query, max_results=5,)
 
