@@ -1,4 +1,4 @@
-from typing import TypedDict
+from typing import TypedDict, Literal
 
 class FinancialAnalysisState(TypedDict):
     company: str
@@ -6,4 +6,4 @@ class FinancialAnalysisState(TypedDict):
     finance: str
     risk: str
     report: str
-    next: str
+    next: Literal["analysis", "writer", "end"]
