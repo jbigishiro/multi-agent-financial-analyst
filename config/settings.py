@@ -9,6 +9,9 @@ class Settings(BaseSettings):
     temperature: float = 0.2
     max_tokens: int = 2000
 
+    api_title: str = "Multi-Agent Financial Analyst"
+    api_version: str = "1.0.0"
+
     model_config = SettingsConfigDict(
         env_file=".env",
         extra="ignore"
