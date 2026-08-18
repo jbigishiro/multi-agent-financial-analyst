@@ -1,7 +1,6 @@
 from pydantic import BaseModel
 from typing import Literal
 from config.llm import get_llm
-from graph.router import Route
 
 class SupervisorDecision(BaseModel):
     next: Literal["analysis", "writer", "end"]
