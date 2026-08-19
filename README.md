@@ -1,197 +1,206 @@
-# Multi-Agent Financial Analys
+# Multi-Agent Financial Analyst
 
-A production-oriented multi-agent AI system for financial company analysis, built with **LangGraph, LangChain, OpenAI, RAG, FastAPI, and Docker**.
-The system accepts a company name such as NVIDIA and orchestrates specialized AI agents for:
+An AI-powered financial analysis system that uses multiple specialized agents to analyze a company's financial information from an uploaded PDF document and current web information.
 
-* Company and industry research
-* Financial analysis using retrieved financial documents
-* Risk identification
-* Final report generation
+The system combines:
 
-The project demonstrates how to build, test, containerize, and expose a multi-agent AI application through a REST API.
+- Multi-agent orchestration with LangGraph
+- Retrieval-Augmented Generation (RAG)
+- PDF document processing
+- Vector search with Chroma
+- OpenAI embeddings and LLMs
+- Web search with Tavily
+- FastAPI for the REST API
 
+The goal of the project is to simulate a financial analyst team where different AI agents specialize in research, financial analysis, risk analysis, and report generation.
 
-## Architecture
+---
 
-```text
-                         User
-                           │
-                           ▼
-                      FastAPI API
-                           │
-                           ▼
-                    Analysis Service
-                           │
-                           ▼
-                      LangGraph
-                           │
-                           ▼
-                      Supervisor
-                    /      |       \
-                   ▼       ▼        ▼
-              Research  Finance    Risk
-                 │         │         │
-                 ▼         ▼         ▼
-               Tavily      RAG      Tavily
-                 │         │         │
-                 └─────────┼─────────┘
-                           ▼
-                      Writer Agent
-                           │
-                           ▼
-                      Final Report
-                           │
-                           ▼
-                     API Response
-```
+## Features
 
-### Workflow
+### Multi-Agent Financial Analysis
 
-1. The client submits a company name to `POST /analyze`.
-2. FastAPI validates the request.
-3. The analysis service initializes the LangGraph state.
-4. The supervisor determines which agent should execute.
-5. The research agent gathers company and industry information.
-6. The finance agent retrieves relevant financial information through RAG.
-7. The risk agent identifies relevant risks.
-8. The writer agent combines the available information into a final report.
-9. FastAPI returns the completed analysis.
+The system uses specialized agents for different parts of the analysis:
 
+1. **Supervisor Agent**
+   - Controls the workflow.
+   - Determines which stage should run next.
 
+2. **Research Agent**
+   - Researches the company using current web information.
+   - Looks for:
+     - Recent developments
+     - Company announcements
+     - Industry trends
+     - Competitors
+     - Market developments
 
-## Tech Stack
+3. **Finance Agent**
+   - Analyzes the uploaded financial document.
+   - Uses RAG to retrieve relevant financial information.
+   - Focuses on:
+     - Revenue
+     - Profitability
+     - Cash flow
+     - Financial trends
+     - Financial risks
 
-| Technology   | Purpose                                  |
-| ------------ | ---------------------------------------- |
-| Python       | Application development                  |
-| LangGraph    | Multi-agent workflow orchestration       |
-| LangChain    | LLM and tool integration                 |
-| OpenAI       | Language model and embeddings            |
-| RAG          | Financial document retrieval             |
-| Vector Store | Semantic search over financial documents |
-| Tavily       | Web research                             |
-| FastAPI      | REST API                                 |
-| Pydantic     | Request/response validation              |
-| Pytest       | Automated testing                        |
-| Docker       | Containerization                         |
-| Git          | Version control                          |
-| GitHub       | Source control and collaboration         |
+4. **Risk Agent**
+   - Uses current web information to identify important risks.
+   - Focuses on:
+     - Business risks
+     - Competitive risks
+     - Regulatory risks
+     - Technology risks
+     - Market risks
+     - Recent developments
 
+5. **Writer Agent**
+   - Combines the outputs from the Research, Finance, and Risk agents.
+   - Produces the final financial analysis report.
 
-## API
+---
 
-### Health Check
+# Architecture
 
-```http
-GET /health
-```
-
-Example response:
-
-```json
-{
-  "status": "healthy"
-}
-```
-
-### Financial Analysis
-
-```http
-POST /analyze
-```
-
-Request:
-
-```json
-{
-  "company": "NVIDIA"
-}
-```
-
-Response:
-
-```json
-{
-  "request_id": "42bd1e84-6de8-4f97-94d0-181785a79bd4",
-  "company": "NVIDIA",
-  "report": "..."
-}
-```
-
-Interactive API documentation is available through FastAPI's Swagger UI:
-
-`http://127.0.0.1:8000/docs`
-
-## Running with Docker
-
-Build the Docker image:
-
-```bash
-docker build -t multi-agent-financial-analyst .
-```
-
-Run the container:
-
-```bash
-docker run --env-file .env -p 8000:8000 multi-agent-financial-analyst
-```
-
-The API will be available at:
+The high-level workflow is:
 
 ```text
-http://127.0.0.1:8000
-```
-
-Swagger documentation:
-
-```text
-http://127.0.0.1:8000/docs
-```
-
-## Testing
-
-The project includes automated tests covering the API, agents, RAG pipeline, workflow, financial calculations, document processing, retrieval, search, and supporting services.
-
-Run the complete test suite:
-
-```bash
-pytest -v
-```
-
-Expected result:
-
-```text
-29 passed
-```
-The tests are designed to verify individual components as well as the complete analysis workflow.
-
-
-## Limitations
-
-This project is a production-oriented prototype rather than a production financial advisory platform.
-
-Current limitations include:
-
-* Financial data coverage depends on the available documents and external tools.
-* LLM-generated reports require validation before being used for financial decisions.
-* The current deployment is designed primarily for demonstration and portfolio purposes.
-* Production deployment would require authentication, persistent infrastructure, monitoring, and stronger evaluation.
-* Financial analysis should not be interpreted as investment advice.
+                         ┌──────────────────┐
+                         │     FastAPI      │
+                         │    /analyze      │
+                         └────────┬─────────┘
+                                  │
+                                  ▼
+                         ┌──────────────────┐
+                         │    Supervisor    │
+                         │      Agent       │
+                         └────────┬─────────┘
+                                  │
+                                  ▼
+              ┌───────────────────┼───────────────────┐
+              │                   │                   │
+              ▼                   ▼                   ▼
+      ┌──────────────┐    ┌──────────────┐    ┌──────────────┐
+      │   Research   │    │   Finance    │    │     Risk     │
+      │    Agent     │    │    Agent     │    │    Agent     │
+      └──────┬───────┘    └──────┬───────┘    └──────┬───────┘
+             │                   │                   │
+             ▼                   ▼                   ▼
+          Tavily             PDF + RAG             Tavily
+          Search             Chroma                 Search
+                                  │
+                                  ▼
+                         ┌──────────────────┐
+                         │      Writer      │
+                         │      Agent       │
+                         └────────┬─────────┘
+                                  │
+                                  ▼
+                         ┌──────────────────┐
+                         │  Final Report    │
+                         └──────────────────┘
 
 
-## Future Improvements
+---
 
-Potential improvements include:
+# RAG Pipeline
 
-* Persistent production checkpoint storage
-* Authentication and authorization
-* CI/CD pipeline
-* Cloud deployment
-* Improved observability and monitoring
-* LLM evaluation and quality metrics
-* Token and API cost tracking
-* Streaming responses
-* More robust financial-data extraction
-* Additional financial data sources
-* Automated agent evaluation
-* Improved caching and performance
+Uploaded PDF
+     │
+     ▼
+PyPDFLoader
+     │
+     ▼
+Document Pages
+     │
+     ▼
+RecursiveCharacterTextSplitter
+     │
+     ▼
+Document Chunks
+     │
+     ▼
+OpenAI Embeddings
+     │
+     ▼
+Chroma Vector Store
+     │
+     ▼
+Similarity Search
+     │
+     ▼
+Relevant Financial Context
+     │
+     ▼
+Finance Agent
+
+
+# Project Structure
+
+multi-agent-financial-analyst/
+│
+├── agents/
+│   ├── finance.py
+│   ├── research.py
+│   ├── risk.py
+│   ├── supervisor.py
+│   └── writer.py
+│
+├── config/
+│   ├── llm.py
+│   ├── logging.py
+│   └── settings.py
+│
+├── graph/
+│   ├── nodes.py
+│   ├── router.py
+│   ├── state.py
+│   └── workflow.py
+│
+├── rag/
+│   ├── embeddings.py
+│   ├── loader.py
+│   ├── pipeline.py
+│   ├── retriever.py
+│   ├── splitter.py
+│   └── vectorstore.py
+│
+├── services/
+│   └── analysis.py
+│
+├── tools/
+│   ├── agent_tools.py
+│   ├── calculator.py
+│   ├── financial_rag.py
+│   └── search.py
+│
+├── data/
+│   ├── uploads/
+│   └── chroma/
+│
+├── app.py
+├── requirements.txt
+├── Dockerfile
+├── README.md
+└── .env
+
+---
+# Technology Stack
+
+| Technology    | Purpose                            |
+| ------------- | ---------------------------------- |
+| Python        | Primary programming language       |
+| FastAPI       | REST API                           |
+| Uvicorn       | ASGI server                        |
+| LangGraph     | Multi-agent workflow orchestration |
+| LangChain     | LLM and tool integration           |
+| OpenAI        | LLM and embeddings                 |
+| Chroma        | Vector database                    |
+| Tavily        | Web search                         |
+| PyPDFLoader   | PDF document loading               |
+| Pydantic      | Data validation                    |
+| python-dotenv | Environment configuration          |
+| Git/GitHub    | Version control                    |
+
+
