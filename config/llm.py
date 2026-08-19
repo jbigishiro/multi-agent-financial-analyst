@@ -1,9 +1,11 @@
 from langchain_openai import ChatOpenAI
 from config.settings import settings
 
+
 def get_llm() -> ChatOpenAI:
     return ChatOpenAI(
-    api_key=settings.openai_api_key,
-    model=settings.model_name,
-    timeout=60,
-)
+        api_key=settings.openai_api_key,
+        model=settings.model_name,
+        timeout=90,
+        max_retries=0,
+    )

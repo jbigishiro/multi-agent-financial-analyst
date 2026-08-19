@@ -2,19 +2,11 @@ from graph.state import create_initial_state
 from graph.workflow import graph
 
 
-def run_analysis(company: str, request_id: str):
+def run_analysis(company: str,request_id: str,document_path: str,):
 
-    state = create_initial_state(company)
-
-    config = {
-        "configurable": {
-            "thread_id": request_id
-        }
-    }
-
-    result = graph.invoke(
-        state,
-        config=config
+    state = create_initial_state(company,document_path,request_id,)
+    config = {"configurable": {"thread_id": request_id}}
+    result = graph.invoke(state,config=config
     )
 
     if not result:

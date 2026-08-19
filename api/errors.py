@@ -1,11 +1,9 @@
 from fastapi import Request
 from fastapi.responses import JSONResponse
-
 from config.logging import logger
 
-
 async def general_exception_handler(
-    request: Request,
+request: Request,
     exc: Exception
 ):
     request_id = getattr(

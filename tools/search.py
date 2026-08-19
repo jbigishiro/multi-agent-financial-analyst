@@ -13,7 +13,7 @@ def search_web(query: str) -> str:
             raise ValueError("Search query cannot be empty.")
     
     client = TavilyClient(api_key=settings.tavily_api_key)
-    response = client.search(query=query, max_results=5,)
+    response = client.search(query=query, max_results=3,)
 
     results = []
 
@@ -25,7 +25,6 @@ def search_web(query: str) -> str:
         results.append(
             f"Title: {title}\n"
             f"URL: {url}\n"
-            f"Content: {content}"
+            f"Content: {content[:2000]}"
         )
-
     return "\n\n".join(results)

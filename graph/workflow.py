@@ -19,7 +19,6 @@ conn = sqlite3.connect(
 )
 
 checkpointer = SqliteSaver(conn)
-
 builder = StateGraph(FinancialAnalysisState)
 
 # Nodes
